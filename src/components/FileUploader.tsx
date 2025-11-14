@@ -4,13 +4,20 @@ import { useDataset } from "../context/DatasetContext";
 
 const FileUploader: React.FC = () => {
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
+    const [uploadEnabled, setUploadEnabled] = useState(false);
     const [loading, setLoading] = useState(false);
     const { setDataset, setPipelineStep } = useDataset();
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
-        if (file) setSelectedFile(file);
+        if (file) {
+            setSelectedFile(file);
+            setPipelineStep("upload");
+            setDataset(null);
+            setUploadEnabled(true);
+        }
     };
+
 
     const handleUpload = async () => {
         if (!selectedFile) return alert("Please upload a file first!");
@@ -19,9 +26,12 @@ const FileUploader: React.FC = () => {
             const data = await uploadFile(selectedFile);
             setDataset(data);
             setPipelineStep("cleaning");
+            setUploadEnabled(false);
             alert("File uploaded successfully");
         } catch (err) {
             console.error("Upload Error: ", err);
+            setUploadEnabled(true);
+            setPipelineStep("upload");
             alert("Upload Failed!");
         } finally {
             setLoading(false);
@@ -52,8 +62,8 @@ const FileUploader: React.FC = () => {
                 )}
                 <button
                     onClick={handleUpload}
-                    disabled={!selectedFile || loading}
-                    className={`mt-6 w-full py-2 rounded-lg text-white font-semibold transition-all ${loading ? "bg-gray-400 cursor-not-allowed" : "bg-sky-500 hover:bg-sky-600"
+                    disabled={!uploadEnabled || loading}
+                    className={`mt-6 w-full py-2 rounded-lg text-white font-semibold transition-all ${!uploadEnabled || loading ? "bg-gray-400 cursor-not-allowed" : "bg-sky-500 hover:bg-sky-600"
                         }`}
                 >
                     {loading ? "Uploading..." : "Upload File"}

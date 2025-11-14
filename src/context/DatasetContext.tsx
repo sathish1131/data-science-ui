@@ -1,22 +1,27 @@
-import React, { createContext, useContext, useState } from "react";
+import { createContext, useContext, useState } from "react";
 import type { ReactNode } from "react";
 
-interface Dataset {
-    name: string;
-    columns: string[];
-    preview: any[];
-}
+export type PipelineStep =
+    | "upload"
+    | "cleaning"
+    | "visualization"
+    | "eda"
+    | "modeling"
+    | "prediction";
 
-interface DatasetContextType {
-    dataset: Dataset | null;
-    setDataset: React.Dispatch<React.SetStateAction<Dataset | null>>;
-}
+type DatasetContextType = {
+    dataset: any;
+    setDataset: (data: any) => void;
+    pipelineStep: PipelineStep;
+    setPipelineStep: (step: PipelineStep) => void;
+};
 
 const DatasetContext = createContext<DatasetContextType | undefined>(undefined);
 
 export const DatasetProvider = ({ children }: { children: ReactNode }) => {
-    const [dataset, setDataset] = useState<Dataset | null>(null);
-    return (<DatasetContext.Provider value={{ dataset, setDataset }}>
+    const [dataset, setDataset] = useState<any>(null);
+    const [pipelineStep, setPipelineStep] = useState<PipelineStep>("upload");
+    return (<DatasetContext.Provider value={{ dataset, setDataset, pipelineStep, setPipelineStep }}>
         {children}
     </DatasetContext.Provider>);
 };

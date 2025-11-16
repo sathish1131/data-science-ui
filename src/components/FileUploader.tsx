@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { uploadFile } from "../services/api";
 import { useDataset } from "../context/DatasetContext";
+import type { UploadResponse } from "../types";
 
 const FileUploader: React.FC = () => {
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -23,7 +24,7 @@ const FileUploader: React.FC = () => {
         if (!selectedFile) return alert("Please upload a file first!");
         try {
             setLoading(true);
-            const data = await uploadFile(selectedFile);
+            const data: UploadResponse = await uploadFile(selectedFile);
             setDataset(data);
             setPipelineStep("cleaning");
             setUploadEnabled(false);

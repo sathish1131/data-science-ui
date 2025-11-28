@@ -13,9 +13,9 @@ export interface ApiResponse<T = any> {
 };
 
 export const UploadDataSchema = z.object({
-    filename: z.string(),
     columns: z.array(z.string()),
     row_count: z.number(),
+    preview: z.array(z.object()),
     message: z.string().optional()
 });
 
@@ -28,6 +28,8 @@ export type UploadResponse = z.infer<typeof UploadResponseSchema>;
 
 export const CleanDataSchema = z.object({
     columns: z.array(z.string()),
+    row_count: z.number(),
+    preview: z.array(z.object()),
     message: z.string().optional()
 });
 

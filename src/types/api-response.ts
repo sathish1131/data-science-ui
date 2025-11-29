@@ -62,6 +62,18 @@ export const VisualizationResponseSchema = ApiResponseSchema.extend({
 export type VisualizationData = z.infer<typeof VisualisationDataSchema>;
 export type VisualizationResponse = z.infer<typeof VisualizationResponseSchema>;
 
+export const ModelBuildDataSchema = z.object({
+    models: z.array(z.string()),
+    message: z.string().optional()
+});
+
+export const ModelBuildResponseSchema = ApiResponseSchema.extend({
+    data: ModelBuildDataSchema
+})
+
+export type ModelBuildData = z.infer<typeof ModelBuildDataSchema>;
+export type ModelBuildResponse = z.infer<typeof ModelBuildResponseSchema>;
+
 export const PredictionDataSchema = z.object({
     result: z.string(),
     message: z.string().optional()

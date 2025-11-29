@@ -1,6 +1,6 @@
 import axios from "axios";
 import { API_CONFIG } from "./config";
-import { UploadResponseSchema, type UploadResponse } from "../types";
+import { CleanResponseSchema, UploadResponseSchema, type CleanResponse, type UploadResponse } from "../types";
 
 const api = axios.create({
     baseURL: API_CONFIG.BASE_URL,
@@ -16,5 +16,19 @@ export const uploadFile = async (file: File): Promise<UploadResponse> => {
         }
     });
     const validated = UploadResponseSchema.parse((await response).data);
+    return validated;
+};
+
+export const cleanData = async (session_id: string): Promise<CleanResponse> => {
+    const response = api.post<CleanResponse>(API_CONFIG.ENDPOINTS.CLEAN_DATA,
+        {
+            "session_id": session_id
+        },
+        {
+            headers: {
+                "Content-Type": "application/json"
+            }
+        });
+    const validated = CleanResponseSchema.parse((await response).data);
     return validated;
 };

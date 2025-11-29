@@ -7,18 +7,18 @@ const FileUploader: React.FC = () => {
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const [uploadEnabled, setUploadEnabled] = useState(false);
     const [loading, setLoading] = useState(false);
-    const { setRawDataset, setPipelineStep } = useDataset();
+    const { setRawDataset, setCleanedDataset, setActiveTab } = useDataset();
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (file) {
             setSelectedFile(file);
-            setPipelineStep("upload");
+            setActiveTab("overview");
             setRawDataset(null);
+            setCleanedDataset(null);
             setUploadEnabled(true);
         }
     };
-
 
     const handleUpload = async () => {
         if (!selectedFile) return alert("Please upload a file first!");
@@ -26,12 +26,10 @@ const FileUploader: React.FC = () => {
             setLoading(true);
             const response: UploadResponse = await uploadFile(selectedFile);
             setRawDataset(response);
-            setPipelineStep("overview");
             setUploadEnabled(false);
             alert("File uploaded successfully");
         } catch (err) {
             setUploadEnabled(true);
-            setPipelineStep("upload");
             alert("Upload Failed!");
         } finally {
             setLoading(false);

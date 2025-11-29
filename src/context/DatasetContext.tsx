@@ -1,46 +1,50 @@
 import { createContext, useContext, useState } from "react";
-import type { ReactNode } from "react";
-
-export type PipelineStep =
-    | "upload"
-    | "overview"
-    | "cleaning"
-    | "visualization"
-    | "eda"
-    | "modeling"
-    | "prediction";
+import type { UploadResponse, CleanResponse, ModelBuildResponse } from "../types";
 
 type DatasetContextType = {
-    rawDataset: any;
-    setRawDataset: (data: any) => void;
-    cleanedDataset: any;
-    setCleanedDataset: (data: any) => void;
-    visualizationDataset: any;
-    setVisualizationDataset: (data: any) => void;
-    edaDataset: any;
-    setEdaDataset: (data: any) => void;
-    pipelineStep: PipelineStep;
-    setPipelineStep: (step: PipelineStep) => void;
+    rawDataset: UploadResponse | null;
+    cleanedDataset: CleanResponse | null;
+    trainedModel: ModelBuildResponse | null;
+    setRawDataset: (data: UploadResponse | null) => void;
+    setCleanedDataset: (data: CleanResponse | null) => void;
+    setTrainedModel: (data: ModelBuildResponse | null) => void;
+    activeTab: string;
+    setActiveTab: (tab: string) => void;
 };
 
-const DatasetContext = createContext<DatasetContextType | undefined>(undefined);
+const DatasetContext = createContext<DatasetContextType>({
+    rawDataset: null,
+    cleanedDataset: null,
+    trainedModel: null,
+    setRawDataset: () => { },
+    setCleanedDataset: () => { },
+    setTrainedModel: () => { },
+    activeTab: "overview",
+    setActiveTab: () => { }
+});
 
-export const DatasetProvider = ({ children }: { children: ReactNode }) => {
-    const [rawDataset, setRawDataset] = useState<any>(null);
-    const [cleanedDataset, setCleanedDataset] = useState<any>(null);
-    const [visualizationDataset, setVisualizationDataset] = useState<any>(null);
-    const [edaDataset, setEdaDataset] = useState<any>(null);
-    const [pipelineStep, setPipelineStep] = useState<PipelineStep>("upload");
-    const values = { rawDataset, setRawDataset, cleanedDataset, setCleanedDataset, visualizationDataset, setVisualizationDataset, edaDataset, setEdaDataset, pipelineStep, setPipelineStep };
-    return (<DatasetContext.Provider value={values}>
-        {children}
-    </DatasetContext.Provider>);
+export const DatasetProvider = ({ children }: any) => {
+    const [rawDataset, setRawDataset] = useState<UploadResponse | null>(null);
+    const [cleanedDataset, setCleanedDataset] = useState<CleanResponse | null>(null);
+    const [trainedModel, setTrainedModel] = useState<any>(null);
+    const [activeTab, setActiveTab] = useState("overview");
+
+    return (
+        <DatasetContext.Provider
+            value={{
+                rawDataset,
+                cleanedDataset,
+                setRawDataset,
+                setCleanedDataset,
+                trainedModel,
+                setTrainedModel,
+                activeTab,
+                setActiveTab,
+            }}
+        >
+            {children}
+        </DatasetContext.Provider>
+    );
 };
 
-export const useDataset = () => {
-    const context = useContext(DatasetContext);
-    if (!context) {
-        throw new Error("useDataset must be used with a DatasetProvider");
-    }
-    return context;
-};
+export const useDataset = () => useContext(DatasetContext);

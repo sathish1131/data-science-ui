@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import DataOverviewTab from "./DataOverview";
 import DataCleanTab from "./DataClean";
 import DataVisualizationTab from "./DataVisualization";
@@ -7,95 +7,45 @@ import ModelBuildTab from "./ModelBuild";
 import PredictionTab from "./Prediction";
 import { useDataset } from "../../context/DatasetContext";
 
-const tabs = [
-    { id: "overview", label: "Data Overview" },
-    { id: "clean", label: "Data Cleaning" },
-    { id: "visual", label: "Data Visualization" },
-    { id: "eda", label: "Auto EDA" },
-    { id: "model", label: "Model Building" },
-    { id: "predict", label: "Prediction" },
-];
-
-const order = ["upload", "overview", "cleaning", "visualization", "eda", "modeling", "prediction"];
-
 const TabsContainer: React.FC = () => {
-    const { pipelineStep, dataset } = useDataset();
-    const [activeTab, setActiveTab] = useState<string>("overview");
+    const { rawDataset, cleanedDataset, trainedModel, activeTab, setActiveTab } = useDataset();
 
-    useEffect(() => {
-        const currentIdx = order.indexOf(pipelineStep);
-
-        const firstEnabled = tabs.find(tab => {
-            const requiredStepKey =
-                tab.id === "overview" ? "overview" :
-                    tab.id === "clean" ? "cleaning" :
-                        tab.id === "visual" ? "visualization" :
-                            tab.id === "eda" ? "eda" :
-                                tab.id === "model" ? "modeling" :
-                                    "prediction";
-            return order.indexOf(requiredStepKey) <= currentIdx;
-        });
-
-        if (firstEnabled) {
-            setActiveTab(firstEnabled.id);
-        } else {
-            setActiveTab("overview");
-        }
-    }, [pipelineStep, dataset]);
-
-    const renderTabContent = () => {
-        switch (activeTab) {
-            case "overview":
-                return <DataOverviewTab />;
-            case "clean":
-                return <DataCleanTab />;
-            case "visual":
-                return <DataVisualizationTab />;
-            case "eda":
-                return <AutoEDATab />;
-            case "model":
-                return <ModelBuildTab />;
-            case "predict":
-                return <PredictionTab />;
-            default:
-                return null;
-        }
-    };
-
-    const currentIdx = order.indexOf(pipelineStep);
+    const tabs = [
+        { id: "overview", label: "Data Overview", enabled: rawDataset !== null },
+        { id: "clean", label: "Data Cleaning", enabled: rawDataset !== null },
+        { id: "visual", label: "Data Visualization", enabled: cleanedDataset !== null },
+        { id: "eda", label: "Auto EDA", enabled: cleanedDataset !== null },
+        { id: "model", label: "Model Building", enabled: cleanedDataset !== null },
+        { id: "predict", label: "Prediction", enabled: trainedModel !== null },
+    ];
 
     return (
         <div className="w-full mt-10 px-6">
             <div className="flex justify-center space-x-4 mb-6">
-                {tabs.map((tab) => {
-                    const requiredStepKey =
-                        tab.id === "overview" ? "overview" :
-                            tab.id === "clean" ? "cleaning" :
-                                tab.id === "visual" ? "visualization" :
-                                    tab.id === "eda" ? "eda" :
-                                        tab.id === "model" ? "modeling" :
-                                            "prediction";
-
-                    const requiredIdx = order.indexOf(requiredStepKey);
-                    const disabled = currentIdx < requiredIdx;
-
-                    return (
-                        <button
-                            key={tab.id}
-                            onClick={() => !disabled && setActiveTab(tab.id)}
-                            disabled={disabled}
-                            className={`px-4 py-2 rounded-xl font-medium text-sm transition-all
-                ${activeTab === tab.id ? "bg-sky-500 text-white shadow" : "bg-gray-100 text-gray-600 hover:bg-sky-100"}
-                ${disabled ? "opacity-40 cursor-not-allowed" : ""}
-              `}
-                        >
-                            {tab.label}
-                        </button>
-                    );
-                })}
+                {tabs.map(tab => (
+                    <button
+                        key={tab.id}
+                        onClick={() => tab.enabled && setActiveTab(tab.id)}
+                        disabled={!tab.enabled}
+                        className={`px-4 py-2 rounded-xl font-medium text-sm 
+              ${activeTab === tab.id ? "bg-sky-500 text-white" : "bg-gray-100 text-gray-600"}
+              ${!tab.enabled ? "opacity-40 cursor-not-allowed" : ""}
+            `}
+                    >
+                        {tab.label}
+                    </button>
+                ))}
             </div>
-            <div className="bg-white border border-gray-200 rounded-2xl shadow-md p-8 text-center min-h-[200px]">
-                {renderTabContent()}
+
+            <div className="bg-white border border-gray-200 rounded-2xl shadow-md p-8 text-center">
+                {{
+                    overview: <DataOverviewTab />,
+                    clean: <DataCleanTab />,
+                    visual: <DataVisualizationTab />,
+                    eda: <AutoEDATab />,
+                    model: <ModelBuildTab />,
+                    predict: <PredictionTab />
+                }[activeTab]}
             </div>
         </div>
     );

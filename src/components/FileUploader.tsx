@@ -30,7 +30,6 @@ const FileUploader: React.FC = () => {
             setUploadEnabled(false);
             alert("File uploaded successfully");
         } catch (err) {
-            console.error("Upload Error: ", err);
             setUploadEnabled(true);
             setPipelineStep("upload");
             alert("Upload Failed!");

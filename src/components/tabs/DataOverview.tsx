@@ -10,7 +10,7 @@ const DataOverviewTab: React.FC = () => {
         }
     }, [rawDataset]);
     const [page, setPage] = useState(0);
-    const pageSize = 5;
+    const pageSize = 10;
     return (
         <div className="p-6">
             {rawDataset && (

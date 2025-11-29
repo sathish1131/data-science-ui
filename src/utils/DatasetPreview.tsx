@@ -21,29 +21,46 @@ export default function DatasetPreview({
     const currentRows = preview.slice(startIndex, startIndex + pageSize);
     return (
         <div className="space-y-6">
-            <div>
-                <p className="text-lg font-semibold text-gray-700 mb-3">
-                    Rows: <span className="font-medium text-gray-600">{row_count}</span>
+            <div className="text-left">
+                <p className="text-lg font-semibold text-gray-800">
+                    Rows:{" "}
+                    <span className="font-semibold text-gray-800">{row_count}</span>
                 </p>
-                <p className="text-sm font-medium text-gray-700 mb-2">Columns: </p>
-                <div className="flex gap-2 flex-wrap">{columns.map((col) => (
-                    <span key={col} className="px-3 py-1 rounded-lg bg-gray-100 border text-xs text-gray-700">{col}</span>
-                ))}</div>
+                <p className="text-lg font-semibold text-gray-800 mt-3">Columns:</p>
+                <div className="flex gap-2 flex-wrap mt-2">
+                    {columns.map((col) => (
+                        <span
+                            key={col}
+                            className="px-3 py-1 rounded-lg bg-gray-100 border text-xs text-gray-700"
+                        >
+                            {col}
+                        </span>
+                    ))}
+                </div>
             </div>
+            <p className="text-lg font-semibold text-gray-800 text-left">Preview:</p>
             <div className="overflow-auto rounded-lg border border-gray-200 shadow-sm">
                 <table className="min-w-full text-sm">
                     <thead className="bg-gray-100 text-gray-700">
                         <tr>
                             {columns.map((col) => (
-                                <th key={col} className="text-left font-medium px-4 py-2 border-b">{col}</th>
+                                <th
+                                    key={col}
+                                    className="text-left font-medium px-4 py-2 border-b"
+                                >
+                                    {col}
+                                </th>
                             ))}
                         </tr>
                     </thead>
-                    <tbody className="text-gray-600">
+                    <tbody className="text-gray-700">
                         {currentRows.map((row, index) => (
                             <tr key={index} className="border-b hover:bg-gray-50">
                                 {columns.map((col) => (
-                                    <td key={col} className="px-4 py-2 whitespace-nowrap">
+                                    <td
+                                        key={col}
+                                        className="px-4 py-2 whitespace-nowrap"
+                                    >
                                         {row[col] ?? ""}
                                     </td>
                                 ))}
@@ -53,14 +70,27 @@ export default function DatasetPreview({
                 </table>
             </div>
             <div className="flex justify-end items-center gap-3">
-                <button onClick={() => setPage(page - 1)} disabled={page === 0} className="px-3 py-1 text-sm border rounded-md disabled:opacity-40">
+                <button
+                    onClick={() => setPage(page - 1)}
+                    disabled={page === 0}
+                    className="px-3 py-1 text-sm border rounded-md disabled:opacity-40"
+                >
                     Prev
                 </button>
-                <span className="text-sm text-gray-600">Page {page + 1} / {totalPages}</span>
-                <button onClick={() => setPage(page + 1)} disabled={page === totalPages - 1} className="px-3 py-1 text-sm border rounded-md disabled:opacity-40">
+
+                <span className="text-sm text-gray-600">
+                    Page {page + 1} / {totalPages}
+                </span>
+
+                <button
+                    onClick={() => setPage(page + 1)}
+                    disabled={page === totalPages - 1}
+                    className="px-3 py-1 text-sm border rounded-md disabled:opacity-40"
+                >
                     Next
                 </button>
             </div>
-        </div >
-    )
+
+        </div>
+    );
 };
